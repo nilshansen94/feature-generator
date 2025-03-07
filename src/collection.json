@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
   "schematics": {
     "feature": {
-      "description": "A blank schematic.",
+      "description": "Create an angular feature containing a component, container and possibly other files",
       "factory": "./feature/index#feature",
       "schema": "./feature/schema.json"
     }

@@ -1,28 +1,19 @@
-import { Rule, SchematicContext, Tree } from '@angular-devkit/schematics';
-import {spawnSync} from 'node:child_process';
-
+import { chain, externalSchematic, Rule } from '@angular-devkit/schematics';
 
 // You don't have to export the function as default. You can also have more than one rule factory
 // per file.
 export function feature(options: any): Rule {
   console.log('v5', options);
-  return (tree: Tree, _context: SchematicContext) => {
-    //console.log('current dir', __dirname);
-    const path = process.cwd();
-    console.log('PATH', path);
-    //const workspace = tree.read('/angular.json')?.toString();
-    //console.log('WORKSPACE', workspace);
-    //console.log(tree);
-    console.log('will execute: ', ['generate', 'component', options.name, '--path', path + '/component', '--flat'].join(' '));
-    spawnSync('ng', ['generate', 'component', options.name, '--path', 'component', '--flat'], { stdio: 'inherit' });
+  const name = options.name;
 
-    // Generiere die Container-Komponente in der "container"-Ordner
-    spawnSync('ng', ['generate', 'component', `${options.name}Container`, '--path', 'container', '--flat', 'true', '--inline-style', 'true', '--inline-template', 'true'], { stdio: 'inherit' });
+  const chainItems = [
+    externalSchematic('@schematics/angular', 'component', {name: `${name}/component/${name}`, flat: true}),
+    externalSchematic('@schematics/angular', 'component', {name: `${name}/container/${name}Container`, flat: true, inlineStyle: true, inlineTemplate: true}),
+  ];
 
-    if(options.generateService){
-      spawnSync('ng', ['generate', 'service', options.name, '--path', 'service'], { stdio: 'inherit' });
-    }
+  if(options.generateService) {
+    chainItems.push(externalSchematic('@schematics/angular', 'service', {name: `${name}/service/${name}`}));
+  }
 
-    return tree;
-  };
+  return chain(chainItems);
 }
