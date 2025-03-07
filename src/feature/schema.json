@@ -6,6 +6,15 @@
       "type": "string",
       "description": "The name of the feature"
     },
+    "path": {
+      "type": "string",
+      "format": "path",
+      "$default": {
+        "$source": "workingDirectory"
+      },
+      "description": "The path where the component files should be created, relative to the current workspace. If not provided, a folder with the same name as the component will be created in the project's `src/app` directory.",
+      "visible": false
+    },
     "generateService": {
       "type": "boolean",
       "description": "Specify if you want to generate a service as well",
