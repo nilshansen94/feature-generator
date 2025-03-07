@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the feature"
+    },
+    "generateService": {
+      "type": "boolean",
+      "description": "Specify if you want to generate a service as well",
+      "x-prompt": "Do you want to add a service"
+    }
+  },
+  "required": []
+}
