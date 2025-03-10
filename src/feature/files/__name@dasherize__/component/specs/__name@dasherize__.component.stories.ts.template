@@ -1,0 +1,26 @@
+import {applicationConfig, Meta, moduleMetadata, StoryObj} from '@storybook/angular';
+import {<%= classify(name) %>Component} from '../<%= dasherize(name) %>.component';
+
+export default {
+  title: 'Features/<%= classify(name) %>',
+  component: <%= classify(name) %>Component,
+  decorators: [
+    applicationConfig({
+      providers: []
+    }),
+    moduleMetadata({
+      declarations: [],
+      imports: [
+        <%= classify(name) %>Component
+      ],
+    })
+  ]
+} as Meta<<%= classify(name) %>Component>;
+
+type Story = StoryObj<<%= classify(name) %>Component>;
+
+export const Default: Story = {
+  args: {
+
+  }
+};

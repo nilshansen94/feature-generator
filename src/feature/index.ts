@@ -1,4 +1,17 @@
-import {chain, externalSchematic, Rule, SchematicContext, Tree} from '@angular-devkit/schematics';
+import {
+  apply,
+  applyTemplates,
+  chain,
+  externalSchematic,
+  mergeWith,
+  move,
+  Rule,
+  SchematicContext,
+  strings,
+  Tree,
+  url
+} from '@angular-devkit/schematics';
+import {normalize} from '@angular-devkit/core';
 
 /**
  * This schematic generates a pure component and it's container and if specified also a service
@@ -13,6 +26,7 @@ import {chain, externalSchematic, Rule, SchematicContext, Tree} from '@angular-d
  * │   ├── abc.component.ts
  * │   └── specs/
  * │       └── abc.component.spec.ts
+ * │       └── abc.component.stories.ts
  * ├── container/
  * │   ├── abc-container.component.ts
  * │   └── specs/
@@ -27,9 +41,12 @@ export function feature(options: any): Rule {
 
   return (_tree: Tree, _context: SchematicContext) => {
     const chainItems = [
-      externalSchematic('@schematics/angular', 'component', {name: `${name}/component/${name}`, flat: true}),
       externalSchematic('@schematics/angular', 'component', {
-        name: `${name}/container/${name}Container`,
+        name: `${strings.dasherize(name)}/component/${name}`,
+        flat: true
+      }),
+      externalSchematic('@schematics/angular', 'component', {
+        name: `${strings.dasherize(name)}/container/${name}Container`,
         flat: true,
         inlineStyle: true,
         inlineTemplate: true
@@ -39,12 +56,14 @@ export function feature(options: any): Rule {
     const folders = ['component', 'container'];
 
     if (options.generateService) {
-      chainItems.push(externalSchematic('@schematics/angular', 'service', {name: `${name}/service/${name}`}));
+      chainItems.push(externalSchematic('@schematics/angular', 'service', {
+        name: `${strings.dasherize(name)}/service/${name}`
+      }));
       folders.push('service');
     }
 
-    console.log(folders);
     chainItems.push(moveSpecFiles(options, folders));
+    chainItems.push(mergeWith(templateSource(options)));
 
     return chain(chainItems);
   }
@@ -54,7 +73,7 @@ function moveSpecFiles(options: any, folders: string[]): Rule {
   return (tree: Tree, _context: SchematicContext) => {
 
     folders.forEach(folder => {
-      const folderPath = `${options.path}/${options.name}/${folder}`;
+      const folderPath = `${options.path}/${strings.dasherize(options.name)}/${folder}`;
       const specsFolderPath = `${folderPath}/specs`;
 
       // Move .spec.ts files
@@ -65,7 +84,6 @@ function moveSpecFiles(options: any, folders: string[]): Rule {
           const newPath = `${specsFolderPath}/${file}`;
           const fileContent1 = tree.read(oldPath);
           if (fileContent1) {
-            //because of moving the file, the component import needs to be changed. The replace() params could be implemented better though
             const fileContent2 = fileContent1.toString().replace('./', '../');
             tree.create(newPath, fileContent2);
             tree.delete(oldPath);
@@ -77,3 +95,12 @@ function moveSpecFiles(options: any, folders: string[]): Rule {
     return tree;
   };
 }
+
+const templateSource = (options: any) => apply(url('./files'), [
+  applyTemplates({
+    classify: strings.classify,
+    dasherize: strings.dasherize,
+    name: options.name,
+  }),
+  move(normalize(options.path as string)),
+]);
