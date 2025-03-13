@@ -1,7 +1,7 @@
 {
-  "name": "feature",
-  "version": "0.0.0",
-  "description": "A blank schematics",
+  "name": "feature-generator",
+  "version": "0.0.1",
+  "description": "This schematic generates a pure component and it's container and if specified also a service",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "npm run build && jasmine src/**/*_spec.js"

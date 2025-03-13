@@ -35,11 +35,12 @@ import {normalize} from '@angular-devkit/core';
  *      └── abc.component.stories.ts
  *
  * How to run the schematic
- * 1. Pull this repository
+ * 1. Pull this repository.
+ * 2. run `npm install`
  * 2. In this repository:
  *    1. run `npm run build`
  *    2. only once: `npm link`
- * 3. In you angular project
+ * 3. In you angular project:
  *    1. only once: `npm link feature`
  *    2. `ng g feature:feature --name abc`
  *
