@@ -104,7 +104,7 @@ function moveSpecFiles(options: FeatureOptions, folders: string[]): Rule {
           const newPath = `${specsFolderPath}/${file}`;
           const fileContent1 = tree.read(oldPath);
           if (fileContent1) {
-            const fileContent2 = fileContent1.toString().replace('./', '../');
+            const fileContent2 = fileContent1.toString().replace('./', `../${folder}/`);
             tree.create(newPath, fileContent2);
             tree.delete(oldPath);
           }

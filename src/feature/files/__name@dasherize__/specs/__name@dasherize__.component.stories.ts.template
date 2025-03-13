@@ -1,5 +1,5 @@
 import {applicationConfig, Meta, moduleMetadata, StoryObj} from '@storybook/angular';
-import {<%= classify(name) %>Component} from '../<%= dasherize(name) %>.component';
+import {<%= classify(name) %>Component} from '../component/<%= dasherize(name) %>.component';
 
 export default {
   title: 'Features/<%= classify(name) %>',
