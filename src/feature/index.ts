@@ -46,7 +46,14 @@ import {normalize} from '@angular-devkit/core';
  *
  * If you modify the schematic, it is sufficient to run `npm run build` in the schematic, and then you can test the schematic in your angular project by simply executing again the `ng g feature:feature --name abc` command.
  */
-export function feature(options: any): Rule {
+
+interface FeatureOptions {
+  name: string;
+  generateService: boolean;
+  path: string;
+}
+
+export function feature(options: FeatureOptions): Rule {
   const name = options.name;
 
   return (_tree: Tree, _context: SchematicContext) => {
@@ -63,6 +70,7 @@ export function feature(options: any): Rule {
         inlineTemplate: true,
         changeDetection: 'OnPush',
       }),
+      editContainerComponent(options)
     ];
 
     const folders = ['component', 'container'];
@@ -81,7 +89,7 @@ export function feature(options: any): Rule {
   }
 }
 
-function moveSpecFiles(options: any, folders: string[]): Rule {
+function moveSpecFiles(options: FeatureOptions, folders: string[]): Rule {
   return (tree: Tree, _context: SchematicContext) => {
 
     folders.forEach(folder => {
@@ -108,11 +116,26 @@ function moveSpecFiles(options: any, folders: string[]): Rule {
   };
 }
 
-const templateSource = (options: any) => apply(url('./files'), [
+function editContainerComponent(options: FeatureOptions): Rule {
+  return (tree: Tree, _context: SchematicContext) => {
+    const containerPath = `${options.path}/${strings.dasherize(options.name)}/container/${strings.dasherize(options.name)}-container.component.ts`;
+    let containerFileContent = tree.read(containerPath)?.toString();
+
+    containerFileContent = `import {${strings.classify(options.name)}Component} from '../component/${strings.dasherize(options.name)}.component';\n` + containerFileContent;
+    const updatedContent = containerFileContent
+      .replace(/imports: \[\],/, `imports: [${strings.classify(options.name)}Component],`)
+      .replace(/<p>\n\s*abc-container works!\n\s*<\/p>/, `<app-${strings.dasherize(options.name)} />`);
+
+    tree.overwrite(containerPath, updatedContent);
+    return tree;
+  }
+}
+
+const templateSource = (options: FeatureOptions) => apply(url('./files'), [
   applyTemplates({
     classify: strings.classify,
     dasherize: strings.dasherize,
     name: options.name,
   }),
-  move(normalize(options.path as string)),
+  move(normalize(options.path)),
 ]);
