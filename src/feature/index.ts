@@ -53,13 +53,15 @@ export function feature(options: any): Rule {
     const chainItems = [
       externalSchematic('@schematics/angular', 'component', {
         name: `${strings.dasherize(name)}/component/${name}`,
-        flat: true
+        flat: true,
+        changeDetection: 'OnPush',
       }),
       externalSchematic('@schematics/angular', 'component', {
         name: `${strings.dasherize(name)}/container/${name}Container`,
         flat: true,
         inlineStyle: true,
-        inlineTemplate: true
+        inlineTemplate: true,
+        changeDetection: 'OnPush',
       }),
     ];
 
