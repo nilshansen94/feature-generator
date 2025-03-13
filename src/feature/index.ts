@@ -14,27 +14,36 @@ import {
 import {normalize} from '@angular-devkit/core';
 
 /**
- * This schematic generates a pure component and it's container and if specified also a service
+ * This schematic generates a pure component and it's container and if specified also a service.
  * Example:
- * ng g feature:feature --name abc
- * this leads to the following file structure
+ * `ng g feature:feature --name abc`
+ * This leads to the following file structure:
  *
  * abc/
- * ├── component/
- * │   ├── abc.component.scss
- * │   ├── abc.component.html
- * │   ├── abc.component.ts
- * │   └── specs/
- * │       └── abc.component.spec.ts
- * │       └── abc.component.stories.ts
- * ├── container/
- * │   ├── abc-container.component.ts
- * │   └── specs/
- * │       └── abc-container.component.spec.ts
- * └── service/
- *     ├── abc.service.spec.ts
- * │   └── specs/
- * │       └── abc.service.spec.ts
+ *  ├── component/
+ *  │   ├── abc.component.scss
+ *  │   ├── abc.component.html
+ *  │   └── abc.component.ts
+ *  ├── container/
+ *  │   └── abc-container.component.ts
+ *  ├── service/
+ *  │   └── abc.service.ts
+ *  └── specs/
+ *      ├── abc.component.spec.ts
+ *      ├── abc-container.component.spec.ts
+ *      ├── abc.service.spec.ts
+ *      └── abc.component.stories.ts
+ *
+ * How to run the schematic
+ * 1. Pull this repository
+ * 2. In this repository:
+ *    1. run `npm run build`
+ *    2. only once: `npm link`
+ * 3. In you angular project
+ *    1. only once: `npm link feature`
+ *    2. `ng g feature:feature --name abc`
+ *
+ * If you modify the schematic, it is sufficient to run `npm run build` in the schematic, and then you can test the schematic in your angular project by simply executing again the `ng g feature:feature --name abc` command.
  */
 export function feature(options: any): Rule {
   const name = options.name;
@@ -74,7 +83,7 @@ function moveSpecFiles(options: any, folders: string[]): Rule {
 
     folders.forEach(folder => {
       const folderPath = `${options.path}/${strings.dasherize(options.name)}/${folder}`;
-      const specsFolderPath = `${folderPath}/specs`;
+      const specsFolderPath = `${folderPath}/../specs`;
 
       // Move .spec.ts files
       const files = tree.getDir(folderPath).subfiles;

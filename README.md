@@ -1,28 +1,36 @@
 # Getting Started With Schematics
 
-This repository is a basic Schematic implementation that serves as a starting point to create and publish Schematics to NPM.
+This schematic generates a pure component and it's container and if specified also a service.\
+Example: \
+`ng g feature:feature --name abc`\
+This leads to the following file structure:
 
-### Testing
-
-To test locally, install `@angular-devkit/schematics-cli` globally and use the `schematics` command line tool. That tool acts the same as the `generate` command of the Angular CLI, but also has a debug mode.
-
-Check the documentation with
-
-```bash
-schematics --help
+```
+abc/
+├── component/
+│   ├── abc.component.scss
+│   ├── abc.component.html
+│   └── abc.component.ts
+├── container/
+│   └── abc-container.component.ts
+├── service/
+│   └── abc.service.ts
+└── specs/
+    ├── abc.component.spec.ts
+    ├── abc-container.component.spec.ts
+    ├── abc.service.spec.ts
+    └── abc.component.stories.ts
 ```
 
-### Unit Testing
+## How to run the schematic
 
-`npm run test` will run the unit tests, using Jasmine as a runner and test framework.
+1. Pull this repository
+2. In this repository:
+   1. run `npm run build`
+   2. only once: `npm link`
+3. In you angular project
+   1. only once: `npm link feature`
+   2. `ng g feature:feature --name abc`
 
-### Publishing
-
-To publish, simply do:
-
-```bash
-npm run build
-npm publish
-```
-
-That's it!
+If you modify the schematic, it is sufficient to run `npm run build` in the schematic, and then you can test the schematic in your angular
+project by simply executing again the `ng g feature:feature --name abc` command.
